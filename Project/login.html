@@ -1,0 +1,132 @@
+<! -- login.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Vaultify - Login</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f9f9f9;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            max-width: 400px;
+            padding: 20px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        h1 {
+            color: #333;
+            font-size: 24px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+        }
+
+        label {
+            margin-bottom: 8px;
+            font-weight: bold;
+            color: #555;
+        }
+
+        input {
+            padding: 10px;
+            margin-bottom: 16px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            font-size: 16px;
+            transition: border-color 0.3s;
+        }
+
+            input:focus {
+                border-color: #4caf50;
+            }
+
+        button {
+            padding: 12px;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+
+            button:hover {
+                background-color: #45a049;
+            }
+
+        .error-message {
+            color: red;
+            margin-top: 10px;
+        } 
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+    <header>
+        <h1>Vaultify</h1>
+    </header>
+
+    <h2>Login</h2>
+
+    <form id="loginForm">
+        <label for="username">Username:</label>
+        <input type="text" id="username" required>
+
+        <label for="password">Password:</label>
+        <input type="password" id="password" required>
+
+        <button type="submit">Login</button>
+
+        <div class="error-message" id="errorMessage"></div>
+    </form>
+
+    <div class="register-link">
+        <p>Don't have an account? <a href="registration.html">Create Vaultify Account</a></p>
+</div>
+
+        <script>
+            document.addEventListener("DOMContentLoaded", function () {
+                const loginForm = document.getElementById("loginForm");
+
+                loginForm.addEventListener("submit", function (event) {
+                    event.preventDefault();
+                    const username = document.getElementById("username").value;
+                    const password = document.getElementById("password").value;
+
+                    const accounts = JSON.parse(localStorage.getItem("loginkey")) || {};
+                    if (accounts[username] === password) {
+                        localStorage.setItem("currentUser", username);
+                        window.location.href = "HomePage.html"; //This is where the user is redirected to the home page.
+                    } else {
+                        document.getElementById("errorMessage").textContent = "Invalid username or password. Please try again.";
+                    }
+                });
+            });
+        </script>
+</body>
+
+</html>

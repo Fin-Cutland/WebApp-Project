@@ -1,0 +1,162 @@
+﻿<!-- accountList.html -->
+
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Account List - Password Manager</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+
+        th, td {
+            padding: 8px;
+            text-align: left;
+            border-bottom: 1px solid #ddd;
+        }
+
+        th {
+            background-color: #333;
+            color: #fff;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            margin-left: 30px;
+        }
+
+        .back-button {
+            cursor: pointer;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+            padding: 8px 16px;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+
+            .back-button:hover {
+                background-color: #45a049;
+            }
+    </style>
+</head>
+
+<body>
+    <header>
+        <h1>Account List</h1>
+    </header>
+
+    <main>
+        <h2>Account List</h2>
+        <a href="HomePage.html" class="back-button">Back</a>
+
+        <table id="accountTable">
+            <thead>
+                <tr>
+                    <th>Account Title</th>
+                    <th>Username</th>
+                    <th>Password</th>
+                </tr>
+            </thead>
+            <tbody id="accountListBody">
+            </tbody>
+        </table>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const accountList = document.getElementById("accountListBody");
+            const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+
+
+            function refreshAccountList(accounts) {
+                // Implement logic to dynamically update the account list
+                accountList.innerHTML = "";
+
+                for (const Title in accounts) {
+                    const account = accounts[Title];
+                    const row = document.createElement("tr");
+
+                    const titleCell = document.createElement("td");
+                    titleCell.textContent = Title;
+                    row.appendChild(titleCell);
+
+                    const usernameCell = document.createElement("td");
+                    usernameCell.textContent = account.username;
+                    row.appendChild(usernameCell);
+
+                    const passwordCell = document.createElement("td");
+                    const passwordText = document.createElement("span");
+                    passwordText.textContent = "*****";
+                    passwordCell.appendChild(passwordText);
+
+                    const showPasswordButton = document.createElement("button");
+                    showPasswordButton.textContent = "Show";
+                    showPasswordButton.addEventListener("click", function () {
+                        if (passwordText.textContent === "*****") {
+                            passwordText.textContent = account.password;
+                        } else {
+                            passwordText.textContent = "*****";
+                        }
+                    });
+                    passwordCell.appendChild(showPasswordButton);
+                    row.appendChild(passwordCell);
+
+                    const actionCell = document.createElement("td");
+                    const deleteButton = document.createElement("button");
+                    deleteButton.textContent = "Delete";
+                    deleteButton.addEventListener("click", function () {
+                        delete accounts[Title];
+                        localStorage.setItem("accounts", JSON.stringify(accounts));
+                        refreshAccountList(accounts);
+                    });
+                    actionCell.appendChild(deleteButton);
+                    row.appendChild(actionCell);
+
+                    accountList.appendChild(row);
+                }
+            }
+            refreshAccountList(accounts);
+        });
+    </script>
+
+</body>
+
+</html>

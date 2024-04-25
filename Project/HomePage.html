@@ -1,0 +1,224 @@
+﻿<!DOCTYPE html>
+
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Password Manager Prototype</title>
+    <style>
+        body {
+            font-family: 'Arial', sans-serif;
+            margin: 0;
+            padding: 0;
+            background-color: #f4f4f4;
+        }
+
+        header {
+            background-color: #333;
+            color: #fff;
+            padding: 1rem;
+            text-align: center;
+        }
+
+        main {
+            max-width: 800px;
+            margin: 2rem auto;
+            padding: 1rem;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            color: #333;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 1rem;
+        }
+
+        input, button {
+            padding: 0.5rem;
+            font-size: 1rem;
+        }
+
+        button {
+            cursor: pointer;
+            background-color: #4caf50;
+            color: #fff;
+            border: none;
+            border-radius: 4px;
+        }
+
+        nav {
+            background-color: #333;
+            padding: 1rem;
+            text-align: center;
+        }
+
+            nav a {
+                color: #fff;
+                text-decoration: none;
+                padding: 0.5rem 1rem;
+                margin: 0 1rem;
+                border-radius: 4px;
+                cursor: pointer;
+                transition: background-color 0.3s;
+            }
+
+                nav a:hover {
+                    background-color: #555;
+                }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>Vaultify Password Manager</h1>
+    </header>
+
+    <nav>
+        <a href="accountList.html">Account List</a>
+    </nav>
+
+    <main>
+        <h2>Add Account Below</h2>
+        <form id="loginForm">
+            <label for="Title">Title:</label>
+            <input type="text" id="Title" required>
+
+            <label for="username">Account Username or Email:</label>
+            <input type="text" id="username" required>
+
+            <label for="password">Account Password:</label>
+            <input type="password" id="password" required>
+
+            <button type="submit">Save Account</button>
+        </form>
+
+        <h2>Password Strength </h2>
+        <div id="passwordStrengthMeter">
+         
+        </div>
+    </main>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginForm = document.getElementById("loginForm");
+            const passwordInput = document.getElementById("password");
+            const passwordStrengthMeter = document.getElementById("passwordStrengthMeter");
+           
+
+            loginForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const Title = document.getElementById("Title").value;
+                const username = document.getElementById("username").value;
+                const password = passwordInput.value;
+
+                // Check password strength and update the meter
+                const passwordStrength = checkPasswordStrength(password);
+                updatePasswordStrengthMeter(passwordStrength);
+
+                // Save or update the account in local storage
+                saveOrUpdateAccount(Title, username, password);
+                refreshAccountList();
+            });
+
+            passwordInput.addEventListener("input", function () {
+                const password = passwordInput.value;
+                const passwordStrength = checkPasswordStrength(password);
+                updatePasswordStrengthMeter(passwordStrength);
+            });
+
+            function checkPasswordStrength(password) {
+
+                const hasSpecialCharacter = /[!@#$%^&*(),.?":{}|<>]/.test(password);
+
+                const minLength = 8;
+                const maxLength = 15;
+
+                if (password.length < minLength) {
+                    return 0; // Weak
+                } else if (password.length >= minLength && password.length <= maxLength) {
+                    return 50; // Medium
+                } else {
+                    return 100; // Strong
+                }
+            }
+
+            function updatePasswordStrengthMeter(strength) {
+                let strengthText;
+                if (strength === 0) {
+                    strengthText = "Weak"
+                    passwordStrengthMeter.style.color = "red"; // Weak
+                } else if (strength === 50) {
+                    strengthText = "Medium"
+                    passwordStrengthMeter.style.color = "orange"; // Medium
+                } else {
+                    strengthText = "Strong"
+                    passwordStrengthMeter.style.color = "green"; // Strong
+                }
+                passwordStrengthMeter.textContent = 'Password strength: ' + strengthText;
+            }
+
+            function saveOrUpdateAccount(Title, username, password) {
+                const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+                accounts[Title] = { username, password };
+                localStorage.setItem("accounts", JSON.stringify(accounts));
+            }
+
+            function refreshAccountList() {
+                const accounts = JSON.parse(localStorage.getItem("accounts")) || {};
+                const accountListBody = document.getElementById("accountListBody");
+
+
+                accountListBody.innerHTML = "";
+
+                for (const Title in accounts) {
+                    const account = accounts[Title];
+                    const row = document.createElement("tr");
+
+                    const titleCell = document.createElement("td");
+                    titleCell.textContent = Title;
+                    row.appendChild(titleCell);
+
+                    const usernameCell = document.createElement("td");
+                    usernameCell.textContent = account.username;
+                    row.appendChild(usernameCell);
+
+                    const passwordCell = document.createElement("td");
+                    passwordCell.textContent = account.password;
+                    row.appendChild(passwordCell);
+
+                    accountListBody.appendChild(row);
+                    }
+                }
+            
+        });
+
+        document.addEventListener("DOMContentLoaded", function () {
+            const loginForm = document.getElementById("loginForm");
+            const passwordInput = document.getElementById("password");
+
+            loginForm.addEventListener("submit", function (event) {
+                event.preventDefault();
+                const username = document.getElementById("username").value;
+                const password = passwordInput.value;
+
+                const accountListItems = document.querySelectorAll("#accountList li");
+                accountListItems.forEach(function (item) {
+                    if (item.textContent.startsWith(username + ":")) {
+                        item.style.display = "block"; // Show account if it belongs to the logged-in user
+                    } else {
+                        item.style.display = "none"; // Hide account if it doesn't belong to the logged-in user
+                    }
+                });
+            });
+        });
+
+    </script>
+
+</body>
+</html>
